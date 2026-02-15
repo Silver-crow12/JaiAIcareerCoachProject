@@ -1,31 +1,31 @@
 "use client"
+
 import React, { useEffect, useRef } from 'react'
 import { Button } from './ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
 
 const HeroSection = () => {
-
-    const imageRef = useRef();
+  const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const imageElemen = imageRef.current;
+    const imageElement = imageRef.current;
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       const scrollThreshold = 80;
-
-      if (scrollPosition > scrollThreshold) {
-        imageElemen.classList.add("scrolled");
-      } else {
-        imageElemen.classList.remove("scrolled");
+      if (imageElement) {
+        if (scrollPosition > scrollThreshold) {
+          imageElement.classList.add("scrolled");
+        } else {
+          imageElement.classList.remove("scrolled");
+        }
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-        
 
   return (
     <section className='w-full pt-36 md:pt-48 pb-10'>
