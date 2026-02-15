@@ -24,8 +24,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteCoverLetter } from "@/actions/cover-letter";
-
-export default function CoverLetterList({ coverLetters }) {
+import { getUserOnboardingStatus } from "@/actions/user";
+import { redirect } from "next/navigation";
+export default async function CoverLetterList({ coverLetters }) {
+  
+  const { isOnboarded } = await getUserOnboardingStatus();
+  if (isOnboarded) {
+    redirect("/dashboard");
+  }
   const router = useRouter();
 
   const handleDelete = async (id) => {

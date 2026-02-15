@@ -5,8 +5,16 @@ import { generateContent } from "@/actions/generation-tools";
 import { addCredits } from "@/actions/credits"; 
 import { toast } from "sonner";
 import { Loader2, Video, Image as ImageIcon, Sparkles, CreditCard, Coins } from "lucide-react";
+import { getUserOnboardingStatus } from "@/actions/user";
+import { redirect } from "next/navigation";
 
-export default function GenAISelector({ userCredits = 0 }) {
+export default async function GenAISelector({ userCredits = 0 }) {
+  
+  
+  const { isOnboarded } = await getUserOnboardingStatus();
+  if (isOnboarded) {
+    redirect("/dashboard");
+  }
   const [credits, setCredits] = useState(userCredits);
   const [selectedType, setSelectedType] = useState(null); 
   const [prompt, setPrompt] = useState("");
