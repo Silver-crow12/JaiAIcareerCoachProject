@@ -412,7 +412,7 @@ export default function ResumeBuilder({ initialContent }) {
               preview={resumeMode}
             />
           </div>
-          <div className="hidden">
+          <div className="">
             <div id="resume-pdf">
               <MDEditor.Markdown
                 source={previewContent}

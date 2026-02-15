@@ -150,7 +150,7 @@ export default function GenAISelector({ userCredits = 0 }) {
         {result && (
           <div className="mt-8 p-4 border rounded-xl bg-muted/30 animate-in fade-in zoom-in">
             <h3 className="text-lg font-semibold mb-3">Result</h3>
-            <div className="rounded-lg overflow-hidden border bg-background shadow-sm">
+            <div className="rounded-lg border bg-background shadow-sm">
               {selectedType === "IMAGE" ? (
                 <img src={result} alt="Generated" className="w-full h-auto object-cover max-h-[500px]" />
               ) : (
@@ -197,7 +197,7 @@ export default function GenAISelector({ userCredits = 0 }) {
                     <button 
                         onClick={() => handleBuyCredits(50)}
                         disabled={buying}
-                        className="w-full p-4 border-2 border-primary/20 rounded-xl bg-primary/5 hover:bg-primary/10 transition-all flex justify-between items-center relative overflow-hidden"
+                        className="w-full p-4 border-2 border-primary/20 rounded-xl bg-primary/5 hover:bg-primary/10 transition-all flex justify-between items-center relative"
                     >
                         <div className="absolute top-0 right-0 bg-primary text-[10px] text-primary-foreground px-2 py-0.5 rounded-bl-lg">POPULAR</div>
                         <div className="flex items-center gap-3">
