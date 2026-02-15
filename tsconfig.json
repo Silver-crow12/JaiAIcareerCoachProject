@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "app/(main)/layout.js", "app/(main)/ai-cover-letter/[id]/page.jsx", "app/(main)/onboarding/page.jsx"  ],
   "exclude": ["node_modules"]
 }
