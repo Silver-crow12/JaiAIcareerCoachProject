@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { Eye, Trash2 } from "lucide-react";
+import {  Eye, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Card,
@@ -24,14 +24,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteCoverLetter } from "@/actions/cover-letter";
-import { getUserOnboardingStatus } from "@/actions/user";
-import { redirect } from "next/navigation";
-export default async function CoverLetterList({ coverLetters }) {
-  
-  const { isOnboarded } = await getUserOnboardingStatus();
-  if (isOnboarded) {
-    redirect("/dashboard");
-  }
+
+export default function CoverLetterList({ coverLetters }) {
   const router = useRouter();
 
   const handleDelete = async (id) => {

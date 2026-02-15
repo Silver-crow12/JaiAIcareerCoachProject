@@ -27,16 +27,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { getUserOnboardingStatus } from "@/actions/user";
-import { redirect } from "next/navigation";
-const DashboardView = async ({ insights }) => {
-  
 
+const DashboardView = ({ insights }) => {
   
-  const { isOnboarded } = await getUserOnboardingStatus();
-  if (isOnboarded) {
-    redirect("/dashboard");
-  }
   const salaryData = insights.salaryRanges.map((range) => ({
     name: range.role,
     min: range.min / 1000,
