@@ -4,7 +4,7 @@ import { useState } from "react";
 import { generateContent } from "@/actions/generation-tools";
 import { addCredits } from "@/actions/credits"; 
 import { toast } from "sonner";
-import { Loader2, Video, Image as ImageIcon, Sparkles, CreditCard, Coins } from "lucide-react";
+import { Loader2, Video, Image as ImageIcon, Sparkles, CreditCard, Coins, Download } from "lucide-react";
 
 export default function GenAISelector({ userCredits = 0 }) {
   const [credits, setCredits] = useState(userCredits);
@@ -66,6 +66,17 @@ export default function GenAISelector({ userCredits = 0 }) {
         toast.error("Purchase failed");
     }
     setBuying(false);
+  };
+
+  // ✅ New Download Function
+  const handleDownload = () => {
+    if (!result) return;
+    const link = document.createElement("a");
+    link.href = result;
+    link.download = selectedType === "IMAGE" ? "generated-image.png" : "generated-video.mp4";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -149,8 +160,19 @@ export default function GenAISelector({ userCredits = 0 }) {
       
         {result && (
           <div className="mt-8 p-4 border rounded-xl bg-muted/30 animate-in fade-in zoom-in">
-            <h3 className="text-lg font-semibold mb-3">Result</h3>
-            <div className="rounded-lg border bg-background shadow-sm">
+            {/* ✅ Header with Download Button */}
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Result</h3>
+                <button
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:opacity-90 transition-all shadow-sm"
+                >
+                    <Download className="w-4 h-4" />
+                    Download
+                </button>
+            </div>
+
+            <div className="rounded-lg border bg-background shadow-sm overflow-hidden">
               {selectedType === "IMAGE" ? (
                 <img src={result} alt="Generated" className="w-full h-auto object-cover max-h-[500px]" />
               ) : (
