@@ -1,4 +1,3 @@
-
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
@@ -49,9 +48,26 @@ export async function generateContent(prompt, selectedType) {
       resultData =
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4";
     }
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: { credits: { decrement: creditCost } },
+
+    // ✅ NEW: Use a Transaction to Deduct Credits AND Save History
+    const updatedUser = await prisma.$transaction(async (tx) => {
+      // 1. Deduct Credits
+      const u = await tx.user.update({
+        where: { id: user.id },
+        data: { credits: { decrement: creditCost } },
+      });
+
+      // 2. Save to History Table
+      await tx.generatedContent.create({
+        data: {
+          userId: user.id,
+          content: resultData,
+          type: selectedType,
+          prompt: prompt
+        }
+      });
+
+      return u;
     });
 
     return {
@@ -69,6 +85,27 @@ export async function generateContent(prompt, selectedType) {
   }
 }
 
+// ✅ NEW: Function to fetch user history
+export async function getGenHistory() {
+  const { userId } = await auth();
+  if (!userId) return [];
+
+  const user = await prisma.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) return [];
+
+  const history = await prisma.generatedContent.findMany({
+    where: { userId: user.id },
+    orderBy: { createdAt: "desc" },
+    take: 20, // Fetch last 20 items
+  });
+
+  return history;
+}
+
+// Helper Function (Kept exactly the same)
 async function generateImage(prompt, modelRef) {
   const response = await fetch(
     `https://router.huggingface.co/hf-inference/models/${modelRef}`,

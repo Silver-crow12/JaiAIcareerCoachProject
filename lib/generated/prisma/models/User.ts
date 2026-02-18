@@ -288,6 +288,7 @@ export type UserWhereInput = {
   company?: Prisma.StringNullableFilter<"User"> | string | null
   experience?: Prisma.IntNullableFilter<"User"> | number | null
   skills?: Prisma.StringNullableListFilter<"User">
+  generatedContent?: Prisma.GeneratedContentListRelationFilter
   assessments?: Prisma.AssessmentListRelationFilter
   coverLetter?: Prisma.CoverLetterListRelationFilter
   resume?: Prisma.XOR<Prisma.ResumeNullableScalarRelationFilter, Prisma.ResumeWhereInput> | null
@@ -309,6 +310,7 @@ export type UserOrderByWithRelationInput = {
   company?: Prisma.SortOrderInput | Prisma.SortOrder
   experience?: Prisma.SortOrderInput | Prisma.SortOrder
   skills?: Prisma.SortOrder
+  generatedContent?: Prisma.GeneratedContentOrderByRelationAggregateInput
   assessments?: Prisma.AssessmentOrderByRelationAggregateInput
   coverLetter?: Prisma.CoverLetterOrderByRelationAggregateInput
   resume?: Prisma.ResumeOrderByWithRelationInput
@@ -333,6 +335,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   company?: Prisma.StringNullableFilter<"User"> | string | null
   experience?: Prisma.IntNullableFilter<"User"> | number | null
   skills?: Prisma.StringNullableListFilter<"User">
+  generatedContent?: Prisma.GeneratedContentListRelationFilter
   assessments?: Prisma.AssessmentListRelationFilter
   coverLetter?: Prisma.CoverLetterListRelationFilter
   resume?: Prisma.XOR<Prisma.ResumeNullableScalarRelationFilter, Prisma.ResumeWhereInput> | null
@@ -395,6 +398,7 @@ export type UserCreateInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeCreateNestedOneWithoutUserInput
@@ -416,6 +420,7 @@ export type UserUncheckedCreateInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeUncheckedCreateNestedOneWithoutUserInput
@@ -435,6 +440,7 @@ export type UserUpdateInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUpdateOneWithoutUserNestedInput
@@ -456,6 +462,7 @@ export type UserUncheckedUpdateInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUncheckedUpdateOneWithoutUserNestedInput
@@ -630,6 +637,20 @@ export type UserUpdateskillsInput = {
   push?: string | string[]
 }
 
+export type UserCreateNestedOneWithoutGeneratedContentInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGeneratedContentInput, Prisma.UserUncheckedCreateWithoutGeneratedContentInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGeneratedContentInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutGeneratedContentNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGeneratedContentInput, Prisma.UserUncheckedCreateWithoutGeneratedContentInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGeneratedContentInput
+  upsert?: Prisma.UserUpsertWithoutGeneratedContentInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGeneratedContentInput, Prisma.UserUpdateWithoutGeneratedContentInput>, Prisma.UserUncheckedUpdateWithoutGeneratedContentInput>
+}
+
 export type UserCreateNestedOneWithoutAssessmentsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutAssessmentsInput, Prisma.UserUncheckedCreateWithoutAssessmentsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssessmentsInput
@@ -714,6 +735,102 @@ export type UserUncheckedUpdateManyWithoutIndustryInsightsNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateWithoutGeneratedContentInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  name?: string | null
+  imageUrl?: string | null
+  credits?: number
+  tier?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bio?: string | null
+  company?: string | null
+  experience?: number | null
+  skills?: Prisma.UserCreateskillsInput | string[]
+  assessments?: Prisma.AssessmentCreateNestedManyWithoutUserInput
+  coverLetter?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  resume?: Prisma.ResumeCreateNestedOneWithoutUserInput
+  industryInsights?: Prisma.IndustryInsightsCreateNestedOneWithoutUsersInput
+}
+
+export type UserUncheckedCreateWithoutGeneratedContentInput = {
+  id?: string
+  clerkUserId: string
+  email: string
+  name?: string | null
+  imageUrl?: string | null
+  industry?: string | null
+  credits?: number
+  tier?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  bio?: string | null
+  company?: string | null
+  experience?: number | null
+  skills?: Prisma.UserCreateskillsInput | string[]
+  assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutUserInput
+  coverLetter?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  resume?: Prisma.ResumeUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutGeneratedContentInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGeneratedContentInput, Prisma.UserUncheckedCreateWithoutGeneratedContentInput>
+}
+
+export type UserUpsertWithoutGeneratedContentInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGeneratedContentInput, Prisma.UserUncheckedUpdateWithoutGeneratedContentInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGeneratedContentInput, Prisma.UserUncheckedCreateWithoutGeneratedContentInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGeneratedContentInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGeneratedContentInput, Prisma.UserUncheckedUpdateWithoutGeneratedContentInput>
+}
+
+export type UserUpdateWithoutGeneratedContentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  tier?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  skills?: Prisma.UserUpdateskillsInput | string[]
+  assessments?: Prisma.AssessmentUpdateManyWithoutUserNestedInput
+  coverLetter?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  resume?: Prisma.ResumeUpdateOneWithoutUserNestedInput
+  industryInsights?: Prisma.IndustryInsightsUpdateOneWithoutUsersNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGeneratedContentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  industry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credits?: Prisma.IntFieldUpdateOperationsInput | number
+  tier?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  skills?: Prisma.UserUpdateskillsInput | string[]
+  assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutUserNestedInput
+  coverLetter?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  resume?: Prisma.ResumeUncheckedUpdateOneWithoutUserNestedInput
+}
+
 export type UserCreateWithoutAssessmentsInput = {
   id?: string
   clerkUserId: string
@@ -728,6 +845,7 @@ export type UserCreateWithoutAssessmentsInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeCreateNestedOneWithoutUserInput
   industryInsights?: Prisma.IndustryInsightsCreateNestedOneWithoutUsersInput
@@ -748,6 +866,7 @@ export type UserUncheckedCreateWithoutAssessmentsInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeUncheckedCreateNestedOneWithoutUserInput
 }
@@ -782,6 +901,7 @@ export type UserUpdateWithoutAssessmentsInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUpdateOneWithoutUserNestedInput
   industryInsights?: Prisma.IndustryInsightsUpdateOneWithoutUsersNestedInput
@@ -802,6 +922,7 @@ export type UserUncheckedUpdateWithoutAssessmentsInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUncheckedUpdateOneWithoutUserNestedInput
 }
@@ -820,6 +941,7 @@ export type UserCreateWithoutResumeInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
   industryInsights?: Prisma.IndustryInsightsCreateNestedOneWithoutUsersInput
@@ -840,6 +962,7 @@ export type UserUncheckedCreateWithoutResumeInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
 }
@@ -874,6 +997,7 @@ export type UserUpdateWithoutResumeInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
   industryInsights?: Prisma.IndustryInsightsUpdateOneWithoutUsersNestedInput
@@ -894,6 +1018,7 @@ export type UserUncheckedUpdateWithoutResumeInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -912,6 +1037,7 @@ export type UserCreateWithoutCoverLetterInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeCreateNestedOneWithoutUserInput
   industryInsights?: Prisma.IndustryInsightsCreateNestedOneWithoutUsersInput
@@ -932,6 +1058,7 @@ export type UserUncheckedCreateWithoutCoverLetterInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeUncheckedCreateNestedOneWithoutUserInput
 }
@@ -966,6 +1093,7 @@ export type UserUpdateWithoutCoverLetterInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUpdateOneWithoutUserNestedInput
   industryInsights?: Prisma.IndustryInsightsUpdateOneWithoutUsersNestedInput
@@ -986,6 +1114,7 @@ export type UserUncheckedUpdateWithoutCoverLetterInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUncheckedUpdateOneWithoutUserNestedInput
 }
@@ -1004,6 +1133,7 @@ export type UserCreateWithoutIndustryInsightsInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeCreateNestedOneWithoutUserInput
@@ -1023,6 +1153,7 @@ export type UserUncheckedCreateWithoutIndustryInsightsInput = {
   company?: string | null
   experience?: number | null
   skills?: Prisma.UserCreateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedCreateNestedManyWithoutUserInput
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutUserInput
   coverLetter?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeUncheckedCreateNestedOneWithoutUserInput
@@ -1104,6 +1235,7 @@ export type UserUpdateWithoutIndustryInsightsInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUpdateOneWithoutUserNestedInput
@@ -1123,6 +1255,7 @@ export type UserUncheckedUpdateWithoutIndustryInsightsInput = {
   company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experience?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   skills?: Prisma.UserUpdateskillsInput | string[]
+  generatedContent?: Prisma.GeneratedContentUncheckedUpdateManyWithoutUserNestedInput
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutUserNestedInput
   coverLetter?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUncheckedUpdateOneWithoutUserNestedInput
@@ -1150,11 +1283,13 @@ export type UserUncheckedUpdateManyWithoutIndustryInsightsInput = {
  */
 
 export type UserCountOutputType = {
+  generatedContent: number
   assessments: number
   coverLetter: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  generatedContent?: boolean | UserCountOutputTypeCountGeneratedContentArgs
   assessments?: boolean | UserCountOutputTypeCountAssessmentsArgs
   coverLetter?: boolean | UserCountOutputTypeCountCoverLetterArgs
 }
@@ -1167,6 +1302,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGeneratedContentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GeneratedContentWhereInput
 }
 
 /**
@@ -1199,6 +1341,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   company?: boolean
   experience?: boolean
   skills?: boolean
+  generatedContent?: boolean | Prisma.User$generatedContentArgs<ExtArgs>
   assessments?: boolean | Prisma.User$assessmentsArgs<ExtArgs>
   coverLetter?: boolean | Prisma.User$coverLetterArgs<ExtArgs>
   resume?: boolean | Prisma.User$resumeArgs<ExtArgs>
@@ -1261,6 +1404,7 @@ export type UserSelectScalar = {
 
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "email" | "name" | "imageUrl" | "industry" | "credits" | "tier" | "createdAt" | "updatedAt" | "bio" | "company" | "experience" | "skills", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  generatedContent?: boolean | Prisma.User$generatedContentArgs<ExtArgs>
   assessments?: boolean | Prisma.User$assessmentsArgs<ExtArgs>
   coverLetter?: boolean | Prisma.User$coverLetterArgs<ExtArgs>
   resume?: boolean | Prisma.User$resumeArgs<ExtArgs>
@@ -1277,6 +1421,7 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    generatedContent: Prisma.$GeneratedContentPayload<ExtArgs>[]
     assessments: Prisma.$AssessmentPayload<ExtArgs>[]
     coverLetter: Prisma.$CoverLetterPayload<ExtArgs>[]
     resume: Prisma.$ResumePayload<ExtArgs> | null
@@ -1691,6 +1836,7 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  generatedContent<T extends Prisma.User$generatedContentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$generatedContentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GeneratedContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assessments<T extends Prisma.User$assessmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   coverLetter<T extends Prisma.User$coverLetterArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$coverLetterArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoverLetterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   resume<T extends Prisma.User$resumeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$resumeArgs<ExtArgs>>): Prisma.Prisma__ResumeClient<runtime.Types.Result.GetResult<Prisma.$ResumePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2131,6 +2277,30 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Users to delete.
    */
   limit?: number
+}
+
+/**
+ * User.generatedContent
+ */
+export type User$generatedContentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GeneratedContent
+   */
+  select?: Prisma.GeneratedContentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GeneratedContent
+   */
+  omit?: Prisma.GeneratedContentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GeneratedContentInclude<ExtArgs> | null
+  where?: Prisma.GeneratedContentWhereInput
+  orderBy?: Prisma.GeneratedContentOrderByWithRelationInput | Prisma.GeneratedContentOrderByWithRelationInput[]
+  cursor?: Prisma.GeneratedContentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GeneratedContentScalarFieldEnum | Prisma.GeneratedContentScalarFieldEnum[]
 }
 
 /**

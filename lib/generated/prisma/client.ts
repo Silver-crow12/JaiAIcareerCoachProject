@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model GeneratedContent
+ * 
+ */
+export type GeneratedContent = Prisma.GeneratedContentModel
+/**
  * Model Assessment
  * 
  */

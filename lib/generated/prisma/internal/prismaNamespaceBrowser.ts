@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  GeneratedContent: 'GeneratedContent',
   Assessment: 'Assessment',
   Resume: 'Resume',
   CoverLetter: 'CoverLetter',
@@ -92,6 +93,18 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const GeneratedContentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  content: 'content',
+  prompt: 'prompt',
+  type: 'type',
+  createdAt: 'createdAt'
+} as const
+
+export type GeneratedContentScalarFieldEnum = (typeof GeneratedContentScalarFieldEnum)[keyof typeof GeneratedContentScalarFieldEnum]
 
 
 export const AssessmentScalarFieldEnum = {

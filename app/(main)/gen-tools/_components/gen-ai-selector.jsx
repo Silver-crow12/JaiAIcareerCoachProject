@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { generateContent } from "@/actions/generation-tools";
+import { useState, useEffect } from "react";
+import { generateContent, getGenHistory } from "@/actions/generation-tools";
 import { addCredits } from "@/actions/credits"; 
 import { toast } from "sonner";
-import { Loader2, Video, Image as ImageIcon, Sparkles, CreditCard, Coins, Download } from "lucide-react";
+import { Loader2, Video, Image as ImageIcon, Sparkles, CreditCard, Coins, Download, History, RefreshCcw } from "lucide-react";
 
 export default function GenAISelector({ userCredits = 0 }) {
+  const [activeTab, setActiveTab] = useState("create"); // 'create' | 'history'
+  const [historyList, setHistoryList] = useState([]);
+  
   const [credits, setCredits] = useState(userCredits);
   const [selectedType, setSelectedType] = useState(null); 
   const [prompt, setPrompt] = useState("");
@@ -15,6 +18,22 @@ export default function GenAISelector({ userCredits = 0 }) {
     
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [buying, setBuying] = useState(false);
+
+  // ✅ Load History when tab changes
+  useEffect(() => {
+    if (activeTab === "history") {
+        fetchHistory();
+    }
+  }, [activeTab]);
+
+  const fetchHistory = async () => {
+    try {
+        const data = await getGenHistory();
+        setHistoryList(data);
+    } catch (err) {
+        console.error("Failed to load history");
+    }
+  };
 
   const handleGenerate = async () => {
     if (!selectedType) return toast.error("Select a type!");
@@ -68,21 +87,22 @@ export default function GenAISelector({ userCredits = 0 }) {
     setBuying(false);
   };
 
-  // ✅ New Download Function
-  const handleDownload = () => {
-    if (!result) return;
+  const handleDownload = (url, type) => {
+    if (!url) return;
     const link = document.createElement("a");
-    link.href = result;
-    link.download = selectedType === "IMAGE" ? "generated-image.png" : "generated-video.mp4";
+    link.href = url;
+    link.download = type === "IMAGE" ? "generated-image.png" : "generated-video.mp4";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 relative">
+    <div className="max-w-4xl mx-auto p-6 relative">
             
       <div className="p-6 border rounded-xl bg-card shadow-sm space-y-6">
+        
+        {/* Header */}
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-primary" />
@@ -101,88 +121,157 @@ export default function GenAISelector({ userCredits = 0 }) {
              </button>
           </div>
         </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={() => { setSelectedType("IMAGE"); setResult(null); }}
-            className={`p-6 border-2 rounded-xl flex flex-col items-center gap-3 transition-all ${
-              selectedType === "IMAGE" 
-                ? "border-blue-500 bg-blue-50/50 text-blue-700 shadow-md" 
-                : "border-border hover:border-blue-200 hover:bg-gray-50"
-            }`}
-          >
-            <div className={`p-3 rounded-full ${selectedType === "IMAGE" ? "bg-blue-100" : "bg-gray-100"}`}>
-                <ImageIcon className="w-8 h-8" />
-            </div>
-            <div className="text-center">
-                <span className="font-semibold block">Generate Image</span>
-                <span className="text-xs text-muted-foreground">Cost: 1 Credit</span>
-            </div>
-          </button>
 
-          <button
-            onClick={() => { setSelectedType("VIDEO"); setResult(null); }}
-            className={`p-6 border-2 rounded-xl flex flex-col items-center gap-3 transition-all ${
-              selectedType === "VIDEO" 
-                ? "border-purple-500 bg-purple-50/50 text-purple-700 shadow-md" 
-                : "border-border hover:border-purple-200 hover:bg-gray-50"
-            }`}
-          >
-            <div className={`p-3 rounded-full ${selectedType === "VIDEO" ? "bg-purple-100" : "bg-gray-100"}`}>
-                <Video className="w-8 h-8" />
-            </div>
-            <div className="text-center">
-                <span className="font-semibold block">Generate Video</span>
-                <span className="text-xs text-muted-foreground">Cost: 5 Credits</span>
-            </div>
-          </button>
+        {/* ✅ Tabs Navigation */}
+        <div className="flex space-x-1 bg-muted/50 p-1 rounded-lg">
+            <button
+                onClick={() => setActiveTab("create")}
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${activeTab === "create" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:bg-background/50"}`}
+            >
+                Create New
+            </button>
+            <button
+                onClick={() => setActiveTab("history")}
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${activeTab === "history" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:bg-background/50"}`}
+            >
+                My History
+            </button>
         </div>
         
-        <div className="space-y-2">
-            <label className="text-sm font-medium ml-1">Your Prompt</label>
-            <textarea
-                className="w-full p-4 border rounded-xl bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all min-h-[100px] resize-none"
-                placeholder={selectedType ? `Describe the ${selectedType.toLowerCase()}...` : "Select a type above to start..."}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                disabled={!selectedType || loading}
-            />
-        </div>
+        {/* === CREATE TAB === */}
+        {activeTab === "create" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+                <div className="grid grid-cols-2 gap-4">
+                    <button
+                        onClick={() => { setSelectedType("IMAGE"); setResult(null); }}
+                        className={`p-6 border-2 rounded-xl flex flex-col items-center gap-3 transition-all ${
+                        selectedType === "IMAGE" 
+                            ? "border-blue-500 bg-blue-50/50 text-blue-700 shadow-md" 
+                            : "border-border hover:border-blue-200 hover:bg-gray-50"
+                        }`}
+                    >
+                        <div className={`p-3 rounded-full ${selectedType === "IMAGE" ? "bg-blue-100" : "bg-gray-100"}`}>
+                            <ImageIcon className="w-8 h-8" />
+                        </div>
+                        <div className="text-center">
+                            <span className="font-semibold block">Generate Image</span>
+                            <span className="text-xs text-muted-foreground">Cost: 1 Credit</span>
+                        </div>
+                    </button>
 
-        <button
-          onClick={handleGenerate}
-          disabled={loading || !selectedType || !prompt}
-          className="w-full py-4 bg-primary text-primary-foreground font-semibold rounded-xl disabled:opacity-50 hover:opacity-90 transition-all flex justify-center items-center gap-2 shadow-lg shadow-primary/25"
-        >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-          {loading ? "Generating..." : "Generate Content"}
-        </button>
-      
-        {result && (
-          <div className="mt-8 p-4 border rounded-xl bg-muted/30 animate-in fade-in zoom-in">
-            {/* ✅ Header with Download Button */}
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Result</h3>
+                    <button
+                        onClick={() => { setSelectedType("VIDEO"); setResult(null); }}
+                        className={`p-6 border-2 rounded-xl flex flex-col items-center gap-3 transition-all ${
+                        selectedType === "VIDEO" 
+                            ? "border-purple-500 bg-purple-50/50 text-purple-700 shadow-md" 
+                            : "border-border hover:border-purple-200 hover:bg-gray-50"
+                        }`}
+                    >
+                        <div className={`p-3 rounded-full ${selectedType === "VIDEO" ? "bg-purple-100" : "bg-gray-100"}`}>
+                            <Video className="w-8 h-8" />
+                        </div>
+                        <div className="text-center">
+                            <span className="font-semibold block">Generate Video</span>
+                            <span className="text-xs text-muted-foreground">Cost: 5 Credits</span>
+                        </div>
+                    </button>
+                </div>
+                
+                <div className="space-y-2">
+                    <label className="text-sm font-medium ml-1">Your Prompt</label>
+                    <textarea
+                        className="w-full p-4 border rounded-xl bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all min-h-[100px] resize-none"
+                        placeholder={selectedType ? `Describe the ${selectedType.toLowerCase()}...` : "Select a type above to start..."}
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        disabled={!selectedType || loading}
+                    />
+                </div>
+
                 <button
-                    onClick={handleDownload}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:opacity-90 transition-all shadow-sm"
+                    onClick={handleGenerate}
+                    disabled={loading || !selectedType || !prompt}
+                    className="w-full py-4 bg-primary text-primary-foreground font-semibold rounded-xl disabled:opacity-50 hover:opacity-90 transition-all flex justify-center items-center gap-2 shadow-lg shadow-primary/25"
                 >
-                    <Download className="w-4 h-4" />
-                    Download
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                    {loading ? "Generating..." : "Generate Content"}
                 </button>
+            
+                {result && (
+                    <div className="mt-8 p-4 border rounded-xl bg-muted/30 animate-in fade-in zoom-in">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Result</h3>
+                            <button
+                                onClick={() => handleDownload(result, selectedType)}
+                                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:opacity-90 transition-all shadow-sm"
+                            >
+                                <Download className="w-4 h-4" />
+                                Download
+                            </button>
+                        </div>
+                        <div className="rounded-lg border bg-background shadow-sm overflow-hidden">
+                            {selectedType === "IMAGE" ? (
+                                <img src={result} alt="Generated" className="w-full h-auto object-cover max-h-[500px]" />
+                            ) : (
+                                <video src={result} controls autoPlay loop className="w-full h-auto max-h-[500px]" />
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
+        )}
 
-            <div className="rounded-lg border bg-background shadow-sm overflow-hidden">
-              {selectedType === "IMAGE" ? (
-                <img src={result} alt="Generated" className="w-full h-auto object-cover max-h-[500px]" />
-              ) : (
-                <video src={result} controls autoPlay loop className="w-full h-auto max-h-[500px]" />
-              )}
-            </div>
-          </div>
+        {/* === HISTORY TAB === */}
+        {activeTab === "history" && (
+             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <History className="w-4 h-4" /> Recent Creations
+                    </h3>
+                    <button onClick={fetchHistory} className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground">
+                        <RefreshCcw className="w-3 h-3" /> Refresh
+                    </button>
+                </div>
+
+                {historyList.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-xl">
+                        <p>No history yet. Start creating!</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {historyList.map((item) => (
+                            <div key={item.id} className="border rounded-lg p-3 bg-muted/20 hover:bg-muted/40 transition-all">
+                                <div className="aspect-video relative rounded-md overflow-hidden bg-black/5 mb-3 border">
+                                    {item.type === "IMAGE" ? (
+                                        <img src={item.content} alt={item.prompt} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <video src={item.content} controls className="w-full h-full object-cover" />
+                                    )}
+                                </div>
+                                <p className="text-xs text-muted-foreground line-clamp-2 h-8 mb-2 font-medium">
+                                    {item.prompt}
+                                </p>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground bg-background px-2 py-1 rounded border">
+                                        {item.type}
+                                    </span>
+                                    <button 
+                                        onClick={() => handleDownload(item.content, item.type)}
+                                        className="p-2 hover:bg-background rounded-full border bg-background shadow-sm text-primary"
+                                        title="Download"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+             </div>
         )}
       </div>
   
+      {/* Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in">
             <div className="bg-background p-8 rounded-2xl shadow-2xl max-w-md w-full border relative">

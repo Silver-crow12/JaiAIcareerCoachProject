@@ -22,10 +22,22 @@ model User {
   company          String?
   experience       Int?
   skills           String[]
+  generatedContent GeneratedContent[]
   assessments      Assessment[]
   coverLetter      CoverLetter[]
   resume           Resume?
   industryInsights IndustryInsights? @relation(fields: [industry], references: [industry])
+}
+
+model GeneratedContent {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  content   String  
+  prompt    String
+  type      String  
+  createdAt DateTime @default(now())
 }
 
 model Assessment {

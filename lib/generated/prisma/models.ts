@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/GeneratedContent'
 export type * from './models/Assessment'
 export type * from './models/Resume'
 export type * from './models/CoverLetter'

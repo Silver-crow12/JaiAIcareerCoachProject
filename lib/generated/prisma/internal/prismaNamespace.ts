@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  GeneratedContent: 'GeneratedContent',
   Assessment: 'Assessment',
   Resume: 'Resume',
   CoverLetter: 'CoverLetter',
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "assessment" | "resume" | "coverLetter" | "industryInsights"
+    modelProps: "user" | "generatedContent" | "assessment" | "resume" | "coverLetter" | "industryInsights"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -479,6 +480,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    GeneratedContent: {
+      payload: Prisma.$GeneratedContentPayload<ExtArgs>
+      fields: Prisma.GeneratedContentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GeneratedContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GeneratedContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>
+        }
+        findFirst: {
+          args: Prisma.GeneratedContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GeneratedContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>
+        }
+        findMany: {
+          args: Prisma.GeneratedContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>[]
+        }
+        create: {
+          args: Prisma.GeneratedContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>
+        }
+        createMany: {
+          args: Prisma.GeneratedContentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GeneratedContentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>[]
+        }
+        delete: {
+          args: Prisma.GeneratedContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>
+        }
+        update: {
+          args: Prisma.GeneratedContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>
+        }
+        deleteMany: {
+          args: Prisma.GeneratedContentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GeneratedContentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GeneratedContentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>[]
+        }
+        upsert: {
+          args: Prisma.GeneratedContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedContentPayload>
+        }
+        aggregate: {
+          args: Prisma.GeneratedContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGeneratedContent>
+        }
+        groupBy: {
+          args: Prisma.GeneratedContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GeneratedContentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GeneratedContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GeneratedContentCountAggregateOutputType> | number
         }
       }
     }
@@ -837,6 +912,18 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const GeneratedContentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  content: 'content',
+  prompt: 'prompt',
+  type: 'type',
+  createdAt: 'createdAt'
+} as const
+
+export type GeneratedContentScalarFieldEnum = (typeof GeneratedContentScalarFieldEnum)[keyof typeof GeneratedContentScalarFieldEnum]
+
+
 export const AssessmentScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1119,6 +1206,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  generatedContent?: Prisma.GeneratedContentOmit
   assessment?: Prisma.AssessmentOmit
   resume?: Prisma.ResumeOmit
   coverLetter?: Prisma.CoverLetterOmit
