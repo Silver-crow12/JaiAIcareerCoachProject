@@ -16,12 +16,12 @@ export async function generateContent(prompt, selectedType) {
   const creditCost = selectedType === "IMAGE" ? 1 : 5;
 
   if (user.credits < creditCost) {
-    return { 
-      success: false, 
-      error: "Insufficient credits", 
+    return {
+      success: false,
+      error: "Insufficient credits",
       limitReached: true,
       required: creditCost,
-      balance: user.credits
+      balance: user.credits,
     };
   }
 
@@ -45,11 +45,38 @@ export async function generateContent(prompt, selectedType) {
         );
       }
     } else if (selectedType === "VIDEO") {
-      resultData =
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4";
+      const { fal } = require("@fal-ai/client");
+
+      if (!process.env.FAL_KEY) {
+        throw new Error("Missing FAL_KEY in environment variables.");
+      }
+
+      console.log("🎬 Starting video generation via Fal.ai...");
+
+      try {
+        const result = await fal.subscribe(
+          "fal-ai/kling-video/v1.6/standard/text-to-video",
+          {
+            input: {
+              prompt: prompt,
+              aspect_ratio: "16:9",
+            },
+            logs: true,
+            onQueueUpdate: (update) => {
+              if (update.status === "IN_PROGRESS") {
+                console.log("⏳ Fal is generating your video...");
+              }
+            },
+          },
+        );
+
+        resultData = result.data.video.url;
+      } catch (error) {
+        console.error("Fal Video Error:", error);
+        throw new Error("Video generation failed via Fal.ai");
+      }
     }
 
-    // ✅ NEW: Use a Transaction to Deduct Credits AND Save History
     const updatedUser = await prisma.$transaction(async (tx) => {
       // 1. Deduct Credits
       const u = await tx.user.update({
@@ -63,8 +90,8 @@ export async function generateContent(prompt, selectedType) {
           userId: user.id,
           content: resultData,
           type: selectedType,
-          prompt: prompt
-        }
+          prompt: prompt,
+        },
       });
 
       return u;
@@ -85,7 +112,7 @@ export async function generateContent(prompt, selectedType) {
   }
 }
 
-// ✅ NEW: Function to fetch user history
+//Function to fetch user history
 export async function getGenHistory() {
   const { userId } = await auth();
   if (!userId) return [];
