@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { generateContent, getGenHistory } from "@/actions/generation-tools";
-import { addCredits } from "@/actions/credits"; 
+import { createCheckoutSession } from "@/actions/stripe"; 
 import { toast } from "sonner";
 import { Loader2, Video, Image as ImageIcon, Sparkles, CreditCard, Coins, Download, History, RefreshCcw } from "lucide-react";
+import Image from "next/image";
 
 export default function GenAISelector({ userCredits = 0 }) {
   const [activeTab, setActiveTab] = useState("create"); // 'create' | 'history'
@@ -19,7 +20,6 @@ export default function GenAISelector({ userCredits = 0 }) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [buying, setBuying] = useState(false);
 
-  // ✅ Load History when tab changes
   useEffect(() => {
     if (activeTab === "history") {
         fetchHistory();
@@ -31,7 +31,7 @@ export default function GenAISelector({ userCredits = 0 }) {
         const data = await getGenHistory();
         setHistoryList(data);
     } catch (err) {
-        console.error("Failed to load history");
+        console.error("Failed to load history",err);
     }
   };
 
@@ -67,24 +67,27 @@ export default function GenAISelector({ userCredits = 0 }) {
       toast.success(`${selectedType} generated!`);
       
     } catch (error) {
-      toast.error("Something went wrong.");
+      toast.error("Something went wrong.",error);
     } finally {
       setLoading(false);
     }
   };
   
-  const handleBuyCredits = async (amount) => {
+
+  const handleBuyCredits = async (amount, priceInCents) => {
     setBuying(true);
-    const response = await addCredits(amount);
-    
-    if (response.success) {
-        setCredits(response.newBalance);
-        setShowPaymentModal(false);
-        toast.success(`Purchased ${amount} Credits!`);
-    } else {
-        toast.error("Purchase failed");
+    try {
+
+      const response = await createCheckoutSession(amount, priceInCents);
+      
+      if (response.url) {
+        window.location.href = response.url;
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to initiate payment.");
+      setBuying(false);
     }
-    setBuying(false);
   };
 
   const handleDownload = (url, type) => {
@@ -122,7 +125,7 @@ export default function GenAISelector({ userCredits = 0 }) {
           </div>
         </div>
 
-        {/* ✅ Tabs Navigation */}
+        {/* Tabs Navigation */}
         <div className="flex space-x-1 bg-muted/50 p-1 rounded-lg">
             <button
                 onClick={() => setActiveTab("create")}
@@ -211,7 +214,7 @@ export default function GenAISelector({ userCredits = 0 }) {
                         </div>
                         <div className="rounded-lg border bg-background shadow-sm overflow-hidden">
                             {selectedType === "IMAGE" ? (
-                                <img src={result} alt="Generated" className="w-full h-auto object-cover max-h-[500px]" />
+                                <Image src={result} alt="Generated" className="w-full h-auto object-cover max-h-[500px]" />
                             ) : (
                                 <video src={result} controls autoPlay loop className="w-full h-auto max-h-[500px]" />
                             )}
@@ -243,7 +246,7 @@ export default function GenAISelector({ userCredits = 0 }) {
                             <div key={item.id} className="border rounded-lg p-3 bg-muted/20 hover:bg-muted/40 transition-all">
                                 <div className="aspect-video relative rounded-md overflow-hidden bg-black/5 mb-3 border">
                                     {item.type === "IMAGE" ? (
-                                        <img src={item.content} alt={item.prompt} className="w-full h-full object-cover" />
+                                        <Image src={item.content} alt={item.prompt} className="w-full h-full object-cover" />
                                     ) : (
                                         <video src={item.content} controls className="w-full h-full object-cover" />
                                     )}
@@ -291,8 +294,9 @@ export default function GenAISelector({ userCredits = 0 }) {
                 </div>
 
                 <div className="space-y-3">
+                    {/* ✅ UPDATED: Passes 10 credits, 500 cents ($5.00) */}
                     <button 
-                        onClick={() => handleBuyCredits(10)}
+                        onClick={() => handleBuyCredits(10, 500)}
                         disabled={buying}
                         className="w-full p-4 border rounded-xl hover:bg-secondary transition-all flex justify-between items-center group"
                     >
@@ -301,12 +305,13 @@ export default function GenAISelector({ userCredits = 0 }) {
                             <span className="font-semibold">10 Credits</span>
                         </div>
                         <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                            $5.00
+                            {buying ? "Loading..." : "$5.00"}
                         </span>
                     </button>
 
+                    {/* ✅ UPDATED: Passes 50 credits, 2000 cents ($20.00) */}
                     <button 
-                        onClick={() => handleBuyCredits(50)}
+                        onClick={() => handleBuyCredits(50, 2000)}
                         disabled={buying}
                         className="w-full p-4 border-2 border-primary/20 rounded-xl bg-primary/5 hover:bg-primary/10 transition-all flex justify-between items-center relative"
                     >
@@ -316,13 +321,13 @@ export default function GenAISelector({ userCredits = 0 }) {
                             <span className="font-semibold">50 Credits</span>
                         </div>
                         <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-bold">
-                            $20.00
+                            {buying ? "Loading..." : "$20.00"}
                         </span>
                     </button>
                 </div>
 
                 <p className="text-xs text-center text-muted-foreground mt-6">
-                    This is a secure demo transaction. No actual card required.
+                    Powered securely by Stripe.
                 </p>
             </div>
         </div>
@@ -331,8 +336,3 @@ export default function GenAISelector({ userCredits = 0 }) {
     </div>
   );
 }
-
-
-
-//google flow api for video gen and credits buy to generate video 
-// 
