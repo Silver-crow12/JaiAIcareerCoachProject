@@ -132,37 +132,28 @@ export async function getGenHistory() {
   return history;
 }
 
-// Helper Function: Keyless Image Generation (100% Uptime)
-async function generateImage(prompt) {
-  console.log(`🖼️ Generating image for prompt: "${prompt}"...`);
+// Helper Function (Kept exactly the same)
+async function generateImage(prompt, modelRef) {
+  const response = await fetch(
+    `https://router.huggingface.co/hf-inference/models/${modelRef}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.HUGGING_FACE_TOKEN}`,
+        "Content-Type": "application/json",
+        "x-use-cache": "false",
+      },
+      method: "POST",
+      body: JSON.stringify({ inputs: prompt }),
+    },
+  );
 
-  try {
-    // We encode the prompt so it's safe for a URL
-    const safePrompt = encodeURIComponent(prompt);
-    
-    // Pollinations generates an image on-the-fly just by calling this URL.
-    // We add a random seed so the same prompt gives different results each time.
-    const randomSeed = Math.floor(Math.random() * 100000);
-    const imageUrl = `https://image.pollinations.ai/prompt/${safePrompt}?seed=${randomSeed}&width=1024&height=1024&nologo=true`;
-
-    // Fetch the image and convert it to a base64 string for your UI
-    const response = await fetch(imageUrl);
-
-    if (!response.ok) {
-      throw new Error(`Public API Error: ${response.status}`);
-    }
-
-    const blob = await response.blob();
-    const buffer = Buffer.from(await blob.arrayBuffer());
-    
-    console.log("✅ Image successfully generated!");
-    return `data:image/jpeg;base64,${buffer.toString("base64")}`;
-
-  } catch (error) {
-    console.error("Image API Failed:", error);
-    
-    // --- SAFETY FALLBACK ---
-    // If you lose internet during your test, this returns a beautiful placeholder
-    return "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1080&auto=format&fit=crop";
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`HF Error (${modelRef}):`, response.status, errorText);
+    throw new Error(`API Error: ${response.status}`);
   }
+
+  const blob = await response.blob();
+  const buffer = Buffer.from(await blob.arrayBuffer());
+  return `data:image/jpeg;base64,${buffer.toString("base64")}`;
 }
